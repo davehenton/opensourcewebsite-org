@@ -12,11 +12,6 @@ php:
 sudo: required
 dist: xenial
 
-cache:
-  directories:
-    - $HOME/.composer/cache
-    - $HOME/.composer/vendor
-    - vendor
 
 services:
   - mysql
@@ -29,21 +24,13 @@ addons:
       - mysql-server
       - mysql-client
 
-install:
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - travis_retry composer install --prefer-dist --no-interaction
-  - cp .env.dist .env
-  - cp config/params.dist.php config/params.php
-  - cp config/web-local.dist.php config/web-local.php
 
 before_script:
   - pip install --user codecov
   - mysql --version
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS test CHARACTER SET utf8 COLLATE utf8_general_ci;'
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - php yii migrate --interactive=0 -c
 
 script:
   - ./tests/bin/yii fixture/load '*' --interactive=0
